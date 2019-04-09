@@ -60,8 +60,9 @@ class OpenSSLProvider(Provider):
     """
     Decrypt and provide secrets from a static file encrypted symmetrically with
     OpenSSL.
+
     """
-    def __init__(self, secret: str):  # nosec
+    def __init__(self, secret: str):  
         self.secret = os.environ.get('VAULTIFY_SECRET', secret)
         self.popen_kwargs = dict(
             bufsize=-1,
@@ -75,6 +76,7 @@ class OpenSSLProvider(Provider):
 
     def get_secrets(self):
         """
+
         This implementation uses a preexisting openssl from the host system to
         run a command equivalent to:
 

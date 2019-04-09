@@ -1,3 +1,2 @@
 hvac>=0.6.4
-pyyaml
 PyYAML==3.12
