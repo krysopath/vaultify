@@ -1,0 +1,41 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+API	base.py	/^class API(metaclass=abc.ABCMeta):$/;"	c
+DotEnvWriter	consumer.py	/^class DotEnvWriter:$/;"	c
+EnvRunner	consumer.py	/^class EnvRunner:$/;"	c
+GPGProvider	provider.py	/^class GPGProvider:$/;"	c
+JsonWriter	consumer.py	/^class JsonWriter:$/;"	c
+UtilTest	test_vaultify.py	/^class UtilTest(unittest.TestCase):$/;"	c
+VAULTIFY_TEST_TOKEN	test_vaultify.py	/^VAULTIFY_TEST_TOKEN = os.environ.get("VAULT_TOKEN", None)$/;"	v
+VAULT_ADDR	test_vaultify.py	/^VAULT_ADDR = os.environ.get("VAULT_ADDR", 'http:\/\/localhost:8200')$/;"	v
+VaultProvider	provider.py	/^class VaultProvider:$/;"	c
+Vaultify	base.py	/^class Vaultify(API):$/;"	c
+__init__	base.py	/^    def __init__(self, provider, consumer):$/;"	m	class:API
+__init__	consumer.py	/^    def __init__(self, path):$/;"	m	class:DotEnvWriter
+__init__	consumer.py	/^    def __init__(self, path):$/;"	m	class:EnvRunner
+__init__	consumer.py	/^    def __init__(self, path):$/;"	m	class:JsonWriter
+__init__	provider.py	/^    def __init__(self, secret, *args, **kwargs):$/;"	m	class:GPGProvider
+__init__	provider.py	/^    def __init__(self, token, addr, paths):$/;"	m	class:VaultProvider
+client	test_vaultify.py	/^client = hvac.Client($/;"	v
+consume_secrets	base.py	/^    def consume_secrets(self, fname, data):$/;"	m	class:API
+consume_secrets	base.py	/^    def consume_secrets(self, fname, data):$/;"	m	class:Vaultify
+consume_secrets	consumer.py	/^    def consume_secrets(self, command, data):$/;"	m	class:EnvRunner
+consume_secrets	consumer.py	/^    def consume_secrets(self, fname, data):$/;"	m	class:DotEnvWriter
+consume_secrets	consumer.py	/^    def consume_secrets(self, fname, data):$/;"	m	class:JsonWriter
+dict2env	util.py	/^def dict2env(secret_data):$/;"	f
+get_secrets	base.py	/^    def get_secrets(self):$/;"	m	class:API
+get_secrets	base.py	/^    def get_secrets(self):$/;"	m	class:Vaultify
+get_secrets	provider.py	/^    def get_secrets(self):$/;"	m	class:GPGProvider
+get_secrets	provider.py	/^    def get_secrets(self):$/;"	m	class:VaultProvider
+main	vaultify.py	/^def main():$/;"	f
+run	base.py	/^    def run(self):$/;"	m	class:API
+run	base.py	/^    def run(self):$/;"	m	class:Vaultify
+test_dict2env	test_vaultify.py	/^    def test_dict2env(self):$/;"	m	class:UtilTest
+test_pathReader	test_vaultify.py	/^    def test_pathReader(self):$/;"	m	class:UtilTest
+test_vaultify_token_lookup_self	test_vaultify.py	/^    def test_vaultify_token_lookup_self(self):$/;"	m	class:UtilTest
+token	test_vaultify.py	/^    token=VAULTIFY_TEST_TOKEN$/;"	v
+url	test_vaultify.py	/^    url=VAULT_ADDR,$/;"	v
