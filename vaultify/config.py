@@ -107,8 +107,13 @@ def configure(
         yaml_files: list = CFG_DEFAULT_FILES) -> dict:
 
     """
-        This populates a global config dictionary with merged values
+        This populates the global config dictionary with merged values
     from yaml cfg files.
+
+    A config created here has these keys for sure:
+    >>> cfg = configure()
+    >>> all([cfg['loggers'],cfg['handlers'],cfg['vaultify'],cfg['formatters'],])
+    True
 
     :param yaml_files: a list off yaml filenames that could exist
     :return: the final global config dict

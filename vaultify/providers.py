@@ -41,7 +41,7 @@ class VaultProvider(Provider):
             url=self.addr,
             token=self.token
             )
-        logger.info('VaultProvider initialized')
+        logger.debug('VaultProvider initialized')
 
     def get_secrets(self):
         """
@@ -72,11 +72,10 @@ class OpenSSLProvider(Provider):
             stderr=PIPE,
             stdout=PIPE
             )
-        logger.info('OpenSSLProvider initialized')
+        logger.debug('OpenSSLProvider initialized')
 
     def get_secrets(self):
         """
-
         This implementation uses a preexisting openssl from the host system to
         run a command equivalent to:
 
@@ -127,7 +126,7 @@ class GPGProvider(Provider):
             stderr=PIPE,
             stdout=PIPE
             )
-        logger.info('GPGProvider initialised')
+        logger.debug('GPGProvider initialised')
 
     def get_secrets(self):
         """
