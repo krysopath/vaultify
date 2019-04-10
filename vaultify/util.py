@@ -58,21 +58,27 @@ def env2dict(env_data: t.AnyStr) -> dict:
 
 def mask_secrets(secrets: dict) -> dict:
     """
-    This function is meant to mask any string values passed between Provider &
-    Consumer, if that value is being printed/logged
+    This function is meant to mask any string values passed between
+    Provider & Consumer, if that value is being printed/logged
 
-    >>> mask_secrets({"path": {"secret1": "unreadable", "secret2": "unreadable"}})
-    {'path': {'secret1': '******', 'secret2': '******'}}
+    >>> mask_secrets(
+    ...     {"path": {
+    ...         "a": "abcdefghijklmnopqrstuvwxyz", 
+    ...         "b": "abc", 
+    ...         "c": {
+    ...             3: "abc",
+    ...             4: "abc"}}})
+    {'path': {'a': '***', 'b': '***', 'c': {3: '***', 4: '***'}}}
     """
     logger.debug(
         "hiding secrets for logs")
     masked = {}
 
     for key, value in secrets.items():
-        if not isinstance(value, dict):
+        if isinstance(value, (str, int)):
             # being extra destructive here, since we do
             # never want secrets leaked into logs
-            value = '******'
+            value = '***'
         elif isinstance(value, dict):
             value = mask_secrets(value)
         else:
@@ -113,8 +119,33 @@ def run_process(cmd: t.Union[list, tuple],
 def yaml_dict_merge(a: dict, b: dict) -> dict:
     """merges b into a and return merged result
 
-    NOTE: tuples and arbitrary objects are not
-    handled as it is totally ambiguous what should happen
+    >>> yaml_dict_merge({'a': {1:1}}, {'a': [4,5]})
+    Traceback (most recent call last):
+      ...
+    ValueError: Cannot merge non-dict "[4, 5]" with dict "{1: 1}"
+    >>> yaml_dict_merge({'a': {1,2}}, {'a': [4,5]})
+    Traceback (most recent call last):
+      ...
+    NotImplementedError: Merging "<class 'set'>" with "<class 'list'>" is not implemented.
+    >>> yaml_dict_merge({'a': 1}, {'b': 2})
+    {'a': 1, 'b': 2}
+    >>> yaml_dict_merge({'a': 1}, {'a': 2})
+    {'a': 2}
+    >>> yaml_dict_merge({'a': {'c':1}}, {'a': {'c':2, 'd': 3}})
+    {'a': {'c': 2, 'd': 3}}
+    >>> yaml_dict_merge({'a': [1,2]}, {'a': [3,4]})
+    {'a': [1, 2, 3, 4]}
+    >>> yaml_dict_merge({'a': [1,2]}, {'a': 3})
+    {'a': [1, 2, 3]}
+    >>> yaml_dict_merge({'a': 1}, {'a': None})
+    {'a': 1}
+    >>> yaml_dict_merge({'a': 1}, {'a': False})
+    {'a': False}
+    >>> yaml_dict_merge({'a': None}, {'a': True})
+    {'a': True}
+    >>> yaml_dict_merge({'a': True}, {'a': None})
+    {'a': True}
+
     """
     key = None
     try:
@@ -150,22 +181,24 @@ def yaml_dict_merge(a: dict, b: dict) -> dict:
                         a[key] = b[key]
             else:
                 raise ValueError(
-                    f'Cannot merge non-dict "{b}" into dict "{a}"')
+                    f'Cannot merge non-dict "{b}" with dict "{a}"')
         else:
             raise NotImplementedError(
-                f'Merging "{type(a)}" into "{type(b)}" is not implemented.'
+                f'Merging "{type(a)}" with "{type(b)}" is not implemented.'
             )
     except TypeError as e:
         raise TypeError(
-            f'"{e}" in key "{key}" when merging "{b}" into "{a}"'
+            f'"{e}" in key "{key}" when merging "{b}" with "{a}"'
         )
     return a
 
 
 def load_yaml_cfg_sources(yaml_files: t.Iterable) -> list:
+    """
+    This function can load any number of yaml files
+    """
     cfg_sources = []
     for config_file in yaml_files:
-
         if os.path.isfile(config_file):
             with open(config_file) as yaml_conf:
                 # linter.run(LINT_CONF, yaml_conf)
@@ -173,11 +206,6 @@ def load_yaml_cfg_sources(yaml_files: t.Iterable) -> list:
                 cfg_sources.append(
                     yaml.safe_load(yaml_conf)
                 )
-        else:
-            logger.warning(
-                f'file not found: {config_file}'
-            )
-
     return cfg_sources
 
 

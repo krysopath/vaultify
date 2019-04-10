@@ -21,10 +21,10 @@ BASE_CFG = {
     },
     "handlers": {
         "console": {
-            "level": "DEBUG",
+            "level": "WARN",
         },
         "file": {
-            "level": "DEBUG",
+            "level": "WARN",
             "filename": "./vaultify.log"
         }
     },
