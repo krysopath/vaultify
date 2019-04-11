@@ -22,4 +22,8 @@ for root, _, filenames in os.walk(root_dir):
 suite = unittest.TestSuite()
 for module in files:
     suite.addTest(doctest.DocTestSuite(module))
-unittest.TextTestRunner(verbosity=1).run(suite)
+
+results = unittest.TextTestRunner(verbosity=1).run(suite)
+if any([results.failures, results.errors]):
+    num = len(results.failures) + len(results.errors)
+    exit(num)

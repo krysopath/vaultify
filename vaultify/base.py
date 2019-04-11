@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 
 class Provider:
     def __str__(self):
-        return f'{self.__class__}'
+        return '{}'.format(self.__class__)
 
     @abc.abstractmethod
     def get_secrets(self) -> dict:
@@ -23,8 +23,7 @@ class Provider:
 
 class Consumer(metaclass=abc.ABCMeta):
     def __str__(self):
-        return f'{self.__class__}'
-
+        return '{}'.format(self.__class__)
 
     @abc.abstractmethod
     def consume_secrets(self,

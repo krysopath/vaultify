@@ -7,8 +7,8 @@ from .util import yaml_dict_merge, load_yaml_cfg_sources
 MODULE_BASE_DIR = os.path.dirname(
     os.path.realpath(__file__))
 ETC_DEFAULT_CONFIG = '/etc/default/vaultify.yml'
-USER_CONFIG = f'{os.environ.get("HOME")}/.vaultify.yml'
-LOCAL_CONFIG = f'{os.environ.get("PWD")}/.vaultify.yml'
+USER_CONFIG = '{}/.vaultify.yml'.format(os.environ.get("HOME"))
+LOCAL_CONFIG = '{}/.vaultify.yml'.format(os.environ.get("PWD"))
 
 CFG_DEFAULT_FILES = [
     ETC_DEFAULT_CONFIG,
@@ -140,5 +140,6 @@ __all__ = (
     "LOCAL_CONFIG",
     "CFG_DEFAULT_FILES",
     "BASE_CFG",
-    "LOG_CFG"
+    "LOG_CFG",
+    "configure"
 )

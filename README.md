@@ -1,11 +1,11 @@
 # vaultify
 
-Our greater purpose is to **never leave any secret file on a persisting 
+Our greater purpose is to **never leave any secret file on a persisting
 filesystem.**
 
 `vaultify` allows to integrate various means of secret provision into
-any runtime environment, may it be some `containerd`, virtualized box or 
-bare-metal. Currently, we provide three means of fetching secrets and three 
+any runtime environment, may it be some `containerd`, virtualized box or
+bare-metal. Currently, we provide three means of fetching secrets and three
 means of consuming them.
 
 
@@ -31,6 +31,13 @@ current environment.
 
 What will be done actually is configurable via the environment, that
 executes vaultify.
+
+## os dependencies
+
+ubuntu:
+```
+apt-get install entr make
+```
 
 ## usage
 
@@ -68,12 +75,12 @@ pairs are supported:
 | JsonWriter   |  y  |    y    |   y   |
 ```
 
-Assuming the pattern holds, we expect always full compatibility 
+Assuming the pattern holds, we expect always full compatibility
 between any Provider/Consumer pair.
 
 ### providers
 
-Providers are all classes, that create some `vaultify`-compliant dictionary, 
+Providers are all classes, that create some `vaultify`-compliant dictionary,
 which then is used by `vaultify` consumers.
 
 #### GPGProvider
@@ -118,7 +125,7 @@ openssl enc -aes-256-cbc -salt -a -in <file> -out <file>.enc
 > Do not use aes-256-cbc, if there is aes-256-gcm available in your openssl.
 This prevents Padding Oracle attacks against the cipher text. Currently
 setting the aes cipher is not possible in `vaultify` but will be made, when
-the default openssl library ships with AEAD compiled. If your OpenSSL CLI 
+the default openssl library ships with AEAD compiled. If your OpenSSL CLI
 supports aes-256-gcm, please file a bug report against vaultify.
 
 Below are environment variables, that are needed by this provider:
@@ -130,7 +137,7 @@ export VAULTIFY_SECRET=<passphrase>
 
 #### VaultProvider
 
-This provider fetches secrets from HashiCorp Vault API. 
+This provider fetches secrets from HashiCorp Vault API.
 
 
 Below are environment variables, that are needed by this provider:
@@ -145,7 +152,7 @@ export VAULT_PATHS=<comma-separated-list-of-paths-for-vaults-kv-engine>
 export VAULT_TOKEN=<a-valid-vault-token>
 ```
 
-`VaultProvider` will use `VAULTIFY_SECRET` or `VAULT_TOKEN` for authentication, 
+`VaultProvider` will use `VAULTIFY_SECRET` or `VAULT_TOKEN` for authentication,
 in that order.
 
 ### consumers
@@ -189,14 +196,14 @@ export VAULTIFY_DESTFILE=/a/path/to/where/secrets.json
 #### EnvRunner
 
 If you want to just execute a process with some secrets, then
-`EnvRunner` consumer will run a subprocess with an enriched 
+`EnvRunner` consumer will run a subprocess with an enriched
 environment for you.
 
 >In that sense `EnvRunner` doubles as an entry point for docker runtimes.
 
 Choose this, if you want to prevent any kind of secret persistence.
 
-> one might not like having docker `tmpfs` volumes swapped or 
+> one might not like having docker `tmpfs` volumes swapped or
 accidentally persist after a crash
 
 Below are environment variables, that are needed by this consumer:

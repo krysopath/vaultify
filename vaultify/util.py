@@ -21,11 +21,12 @@ def dict2env(secret_data: dict) -> t.Iterable:
 
     >>> dict2env({"KEY1": "VAL1", "KEY2": "VAL2"})
     ["export KEY1='VAL1'", "export KEY2='VAL2'"]
+
     """
     logger.debug(
         "transforming this dict to newline separated K=V pairs")
     return [
-        f"export { key }='{ value }'"
+        "export {}='{}'".format(key, value)
         for key, value in secret_data.items()
     ]
 
@@ -107,7 +108,7 @@ def run_process(cmd: t.Union[list, tuple],
         if proc.returncode:
             # if there is non zero rc, please die
             raise ChildProcessError(
-                f'terminated with an non-zero value: {proc.stderr.read()}')
+                'terminated with an non-zero value: {}'.format(proc.stderr.read()))
 
     except OSError as error:
         # this case should handle a missing/non-executable binary
@@ -181,14 +182,14 @@ def yaml_dict_merge(a: dict, b: dict) -> dict:
                         a[key] = b[key]
             else:
                 raise ValueError(
-                    f'Cannot merge non-dict "{b}" with dict "{a}"')
+                    'Cannot merge non-dict "{}" with dict "{}"'.format(b, a))
         else:
             raise NotImplementedError(
-                f'Merging "{type(a)}" with "{type(b)}" is not implemented.'
+                'Merging "{}" with "{}" is not implemented.'.format(type(a), type(b))
             )
     except TypeError as e:
         raise TypeError(
-            f'"{e}" in key "{key}" when merging "{b}" with "{a}"'
+            '"{}" in key "{}" when merging "{}" with "{}"'.format(e, key, b, a)
         )
     return a
 
@@ -202,7 +203,7 @@ def load_yaml_cfg_sources(yaml_files: t.Iterable) -> list:
         if os.path.isfile(config_file):
             with open(config_file) as yaml_conf:
                 # linter.run(LINT_CONF, yaml_conf)
-                logger.debug(f'reading {config_file}')
+                logger.debug('reading %s', config_file)
                 cfg_sources.append(
                     yaml.safe_load(yaml_conf)
                 )

@@ -3,6 +3,8 @@
 
 
 class ValidationError(Exception):
+    def __str___(self):
+        return "{} did not validate successfully".format(self.args)
     """
     Serves as the common base class for vaultify validation problems.
     """

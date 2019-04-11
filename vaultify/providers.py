@@ -52,7 +52,7 @@ class VaultProvider(Provider):
         for path in self.paths:
             secrets[path] = self.client.read(path)["data"]
             logger.info(
-                f'provided secrets from {path}')
+                'provided secrets from {}'.format(path))
         return secrets
 
 
@@ -101,14 +101,14 @@ class OpenSSLProvider(Provider):
             out = run_process(
                 ['openssl', 'aes-256-cbc',
                  '-d', '-a',
-                 '-in', f'{filename}',
-                 '-k', f'{self.secret}'],
+                 '-in', filename,
+                 '-k', self.secret],
                 self.popen_kwargs
             )
 
             secrets[filename] = env2dict(out)
             logger.info(
-                f'provided secrets from {filename}')
+                'provided secrets from {}'.format(filename))
         return secrets
 
 
@@ -139,12 +139,12 @@ class GPGProvider(Provider):
             out = run_process(
                 ['gpg', '-qd',
                  '--yes', '--batch',
-                 f'--passphrase={self.secret}',
-                 f'{filename}'],
+                 '--passphrase={}'.format(self.secret),
+                 filename],
                 self.popen_kwargs
                 )
             secrets[filename] = env2dict(out)
             logger.info(
-                f'provided secrets from {filename}')
+                'provided secrets from {}'.format(filename))
 
         return secrets

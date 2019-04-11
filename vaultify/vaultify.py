@@ -5,6 +5,7 @@
 This file implements vaultifys main function
 """
 
+import sys
 import logging
 import typing as t
 
@@ -20,35 +21,63 @@ logger = logging.getLogger(__name__)
 class Vaultify(API):
     """
     This is the Vaultify implementation that runs our domain logic
+
+    >>> Vaultify()
+    Traceback (most recent call last):
+      ...
+    TypeError: __init__() missing 2 required positional arguments: 'provider' and 'consumer'
+
+    >>> from . import consumers, providers
+    >>> vfy = Vaultify(
+    ...     consumer=consumers.EnvRunner('env'), 
+    ...     provider=providers.GPGProvider('abc')
+    ... )
+    >>> isinstance(vfy, Vaultify)
+    True
+
     """
 
     def get_secrets(self) -> dict:
         logger.info(
-            f'providing secrets from {self._provider}',
+            'providing secrets from {}'.format(
+                self._provider)
         )
         return self._provider.get_secrets()
 
     def consume_secrets(self,
                         data: dict) -> bool:
         logger.info(
-            f'consuming secrets with {self._consumer}'
+            'consuming secrets with {}'.format(
+                self._consumer)
         )
         return self._consumer.consume_secrets(data)
 
     def validate(self) -> t.Iterable:
+        """
+        >>> vfy = Vaultify(
+        ...     consumer="fancystring", 
+        ...     provider={1: 2}
+        ... )
+        >>> isinstance(vfy.validate(), list)
+        True
+        >>> 
+        """
+
         results = []
         if not isinstance(self._provider,
                           Provider):
             results.append(
                 ProviderError(
-                    f"The Provider {self._provider} is not a Provider"
+                    "The Provider {} is not a Provider".format(
+                        self._provider)
                 )
             )
         if not isinstance(self._consumer,
                           Consumer):
             results.append(
                 ConsumerError(
-                    f"The Consumer {self._consumer} is not a Consumer"
+                    "The Consumer {} is not a Consumer".format(
+                        self._consumer)
                 )
             )
 
@@ -58,7 +87,8 @@ class Vaultify(API):
         secrets = self.get_secrets()
         if not secrets:
             raise ValueError(
-                f'The provider did not yield anything: {self._provider}'
+                'The provider did not yield anything: {}'.format(
+                    self._provider)
             )
 
         to_consumer = {}
@@ -79,6 +109,14 @@ def factory(config_dict: dict, **kwargs) -> Vaultify:
     :param config_dict: an initialised cfg dict
     :param kwargs: user passed kwargs
     :return:
+ 
+    >>> from . import configure
+    >>> isinstance(
+    ...     factory(configure()), 
+    ...     Vaultify
+    ... )
+    True
+
     """
     logger.debug("factory starting..")
     vfy = config_dict['vaultify']
@@ -106,6 +144,7 @@ def main() -> None:
     Yes this is the main function. It creates an instance of the
     vaultify domain logic class, runs it. Very main()
     """
+    print(sys.argv)
     vaultify = factory(CFG)
     vaultify.validate()
     vaultify.run()

@@ -60,11 +60,11 @@ class DotEnvWriter(Consumer):
         That file can be sourced or evaluated with the unix shell
         """
         if os.path.exists(self.path) and not self.overwrite:
-            raise RuntimeError(f'{self.path} already exists')
+            raise RuntimeError('{} already exists'.format(self.path))
 
         with open(self.path, 'w') as secrets_file:
             logger.info(
-                f"consuming {self}",
+                "consuming {}".format(self)
             )
 
             secrets_file.write(
@@ -103,8 +103,6 @@ class JsonWriter(Consumer):
         self.path = path
         self.overwrite = overwrite
 
-    def __str__(self):
-        return f'{self.__class__}->{self.path}'
 
     def consume_secrets(self, data: dict):
         """
@@ -112,7 +110,7 @@ class JsonWriter(Consumer):
         That file can be evaluated by any json-aware application.
         """
         if os.path.exists(self.path) and not self.overwrite:
-            raise RuntimeError(f'{self.path} already exists')
+            raise RuntimeError('{} already exists'.format(self.path))
 
         with open(self.path, 'w') as json_file:
             logger.info(
@@ -159,7 +157,7 @@ class EnvRunner(Consumer):
                 {key: value}
             )
         logger.info(
-            f'{self} enriched the environment')
+            '{} enriched the environment'.format(self))
 
         try:
             # TODO Overhaul this
@@ -170,11 +168,12 @@ class EnvRunner(Consumer):
                 env=prepared_env
             )
             logger.info(
-                f'running the process "{self.path}"')
+                'running the process "{}"'.format(self.path))
 
         except FileNotFoundError as error:
             logger.critical(
-                f'error in {self} executing "{self.path}"')
+                'error in {} executing "{}"'.format(self, self.path)
+            )
             raise error
 
         print(
