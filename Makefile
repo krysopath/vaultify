@@ -1,5 +1,7 @@
 TARGET := production
 BASE_IMAGE := 3.7-alpine3.7
+HEAD ?= $(shell git rev-parse --short HEAD)
+TAG ?= $(shell git describe --abbrev=0 --tags)
 
 ci: run/tests\
 	artifact/pkg\
@@ -15,17 +17,17 @@ artifact/pkg:
 artifact/docker: Dockerfile
 	docker build \
 	    --build-arg BASE_IMAGE=$(BASE_IMAGE)\
-	    -t vaultify:$(shell git rev-parse --short HEAD)\
+	    -t vaultify:$(HEAD)\
 	    --target $(TARGET)\
 	    . 
 	docker tag\
-	    vaultify:$(shell git rev-parse --short HEAD)\
-	    vaultify:$(shell git describe --abbrev=0 --tags)-py$(BASE_IMAGE)
+	    vaultify:$(HEAD)\
+	    vaultify:$(TAG)-py$(BASE_IMAGE)
 
 artifact/tag:
 	docker tag\
-		vaultify:$(shell git rev-parse --short HEAD)\
-		vaultify:$(shell git describe --abbrev=0 --tags)
+		vaultify:$(HEAD)\
+		vaultify:$(TAG)
 
 run/tests:
 	rm -rf tests/new* assets/*
@@ -50,7 +52,12 @@ manual:
 	@groff -man -Tascii man/vaultify.1
 
 dev/install/packaging:
-	python3 -m pip install --user --upgrade pip setuptools wheel
+	python3\
+		-m pip \
+		install \
+		--user \
+		--upgrade \
+		pip setuptools wheel
 
 dev/install/os:
 	sudo apt-get install gnupg openssl
