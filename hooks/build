@@ -1,2 +1,2 @@
 #!/bin/sh
-docker build --build-arg BASE_IMAGE=$BASE_IMAGE  .
+make run/tests artifact/docker
