@@ -13,6 +13,7 @@ RUN mkdir secrets assets\
  && chown vaultify .
 COPY ./Makefile Makefile
 COPY ./vaultify vaultify
+COPY .vaultify.yml ./vaultify.yml
 COPY ./entry.py entry.py
 COPY ./setup.py setup.py
 COPY ./tests tests

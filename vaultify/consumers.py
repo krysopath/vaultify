@@ -45,9 +45,8 @@ class DotEnvWriter(Consumer):
     ... ).consume_secrets({"K1":"V1","K2":"V2"})
     >>> open('tests/new.env').read()
     "export K1='V1'\\nexport K2='V2'\\n"
-    
-
     """
+    
     def __init__(self, path: str, overwrite: bool = False):
         self.path = path
         self.overwrite = overwrite
@@ -97,8 +96,8 @@ class JsonWriter(Consumer):
     ... ).consume_secrets({"K1":"V1","K2":"V2"})
     >>> open('tests/new.json').read()
     '{\\n  "K1": "V1",\\n  "K2": "V2"\\n}\\n'
-
     """
+
     def __init__(self, path: str, overwrite: bool = False):
         self.path = path
         self.overwrite = overwrite
