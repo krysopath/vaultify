@@ -82,8 +82,6 @@ def mask_secrets(secrets: dict) -> dict:
             value = '***'
         elif isinstance(value, dict):
             value = mask_secrets(value)
-        else:
-            raise ValueError('unforeseen consequences!!!')
         masked[key] = value
     return masked
 
@@ -92,9 +90,6 @@ def run_process(cmd: t.Union[list, tuple],
                 kwargs: dict) -> t.AnyStr:
     """
     Run a target process with Popen and kwargs
-    :param cmd: for Popen
-    :param kwargs: for Popen
-    :return: bytes from process stdout
 
     >>> run_process(
     ...     ['echo', 'something'],

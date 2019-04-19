@@ -60,7 +60,9 @@ class OpenSSLProvider(Provider):
     """
     Decrypt and provide secrets from a static file encrypted symmetrically with
     OpenSSL.
-
+    
+    >>> OpenSSLProvider(secret='abc').get_secrets()
+    {'./assets/test.enc': {'K1': 'V1', 'K2': 'V2'}}
     """
     def __init__(self,
                  secret: str,
@@ -100,12 +102,14 @@ class OpenSSLProvider(Provider):
             secrets[filename] = env2dict(out)
             logger.info(
                 'provided secrets from {}'.format(filename))
-        return secrets
+            return secrets
 
 
 class GPGProvider(Provider):
     """
     Decrypt and provide secrets from a static gpg file encrypted symmetrically.
+    >>> GPGProvider(secret='abc').get_secrets()
+    {'./assets/test.gpg': {'K1': 'V1', 'K2': 'V2'}}
     """
     def __init__(self, secret: str):  # nosec
         self.secret = secret

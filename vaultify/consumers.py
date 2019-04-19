@@ -87,7 +87,6 @@ class DotEnvWriter(Consumer, FileWriter):
     This Consumer writes secrets as a set of sourceable `export KEY=value`
     lines
 
-    We want the dictionary outputted in the right format:
     >>> DotEnvWriter('tests/new.env', overwrite=True).consume_secrets({"K1":"V1","K2":"V2"})
     >>> open('tests/new.env').read()
     "export K1='V1'\\nexport K2='V2'\\n"
@@ -102,7 +101,6 @@ class JsonWriter(Consumer, FileWriter):
     """
     This Consumer writes secrets as a JSON dictionary
 
-    We want the dictionary outputted in the right format:
     >>> JsonWriter('tests/new.json', overwrite=True).consume_secrets({"K1":"V1","K2":"V2"})
     >>> open('tests/new.json').read()
     '{\\n  "K1": "V1",\\n  "K2": "V2"\\n}\\n'
@@ -118,7 +116,6 @@ class YamlWriter(Consumer, FileWriter):
     """
     This Consumer writes secrets as a YAML dictionary
 
-    We want the dictionary outputted in the right format:
     >>> YamlWriter('tests/new.yaml', overwrite=True).consume_secrets({"K1":"V1","K2":"V2"})
     >>> open('tests/new.yaml').read()
     'K1: V1\\nK2: V2\\n\\n'
@@ -157,10 +154,6 @@ class EnvRunner(Consumer):
         ).split()
 
     def consume_secrets(self, data: dict):
-        """
-        This consumer does not write a file, but updates its own environment
-        with the secret values and calls any subprocess inside that.
-        """
         prepared_env = dict(os.environ)
 
         for key, value in data.items():
