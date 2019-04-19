@@ -14,7 +14,7 @@ dev/ci:
 artifact/pkg:
 	python3 setup.py sdist bdist_wheel
 
-artifact/docker: Dockerfile
+artifact/docker:
 	docker build \
 	    --build-arg BASE_IMAGE=$(BASE_IMAGE)\
 	    -t vaultify:$(HEAD)\
@@ -29,23 +29,24 @@ artifact/tag:
 		vaultify:$(HEAD)\
 		vaultify:$(TAG)
 
-run/tests:
+clean:
 	rm -rf tests/new* assets/*
+
+run/tests: clean
+	cp tests/sample-config.env assets/secrets.plain
 	gpg \
 	    --symmetric\
 	    --batch\
 	    --passphrase=abc\
 	    -o assets/test.gpg\
 	    tests/secrets.env
-
-	openssl enc \
-	    -k abc \
-	    -aes-256-cbc \
-	    -salt \
-	    -a \
-	    -in tests/secrets.env \
+	openssl enc\
+	    -k abc\
+	    -aes-256-cbc\
+	    -salt\
+	    -a\
+	    -in tests/secrets.env\
 	    -out assets/test.enc
-
 	VAULTIFY_LOG_LEVEL=DEBUG python3 runtests.py
 
 manual:
@@ -53,10 +54,10 @@ manual:
 
 dev/install/packaging:
 	python3\
-		-m pip \
-		install \
-		--user \
-		--upgrade \
+		-m pip\
+		install\
+		--user\
+		--upgrade\
 		pip setuptools wheel
 
 dev/install/os:
