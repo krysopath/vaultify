@@ -5,6 +5,7 @@ This contains some simple util functions used for digesting secrets by
 Vaultify
 """
 import os
+import re
 import typing as t
 import logging.config
 import yaml
@@ -44,6 +45,8 @@ def env2dict(env_data: t.AnyStr) -> dict:
 
     >>> env2dict('KEY1=VAL1\\nKEY2=VAL2')
     {'KEY1': 'VAL1', 'KEY2': 'VAL2'}
+    >>> env2dict('KEY1= #VAL1\\n#KEY2=VAL2')
+    {'KEY1': ''}
     """
     logger.debug(
         "transforming the env to dict-class")
@@ -51,6 +54,7 @@ def env2dict(env_data: t.AnyStr) -> dict:
     dict_data = {}
     line_data = env_data.split('\n')
     for line in line_data:
+        line = re.sub("\s*#.*", "", line)
         if line:
             key, value = line.split('=')
             dict_data[key] = value
@@ -82,8 +86,6 @@ def mask_secrets(secrets: dict) -> dict:
             value = '***'
         elif isinstance(value, dict):
             value = mask_secrets(value)
-        else:
-            raise ValueError('unforeseen consequences!!!')
         masked[key] = value
     return masked
 
@@ -92,9 +94,6 @@ def run_process(cmd: t.Union[list, tuple],
                 kwargs: dict) -> t.AnyStr:
     """
     Run a target process with Popen and kwargs
-    :param cmd: for Popen
-    :param kwargs: for Popen
-    :return: bytes from process stdout
 
     >>> run_process(
     ...     ['echo', 'something'],

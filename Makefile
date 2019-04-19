@@ -9,7 +9,7 @@ ci: run/tests\
 	artifact/tag
 
 dev/ci:
-	ls vaultify/*py Dockerfile .vaultify.yml | entr -s 'make ci'
+	ls vaultify/*py Dockerfile .vaultify.yml | entr -s 'make run/tests'
 
 artifact/pkg:
 	python3 setup.py sdist bdist_wheel
@@ -19,7 +19,7 @@ artifact/docker: Dockerfile
 	    --build-arg BASE_IMAGE=$(BASE_IMAGE)\
 	    -t vaultify:$(HEAD)\
 	    --target $(TARGET)\
-	    . 
+	    .
 	docker tag\
 	    vaultify:$(HEAD)\
 	    vaultify:$(TAG)-py$(BASE_IMAGE)
@@ -46,7 +46,7 @@ run/tests:
 	    -in tests/secrets.env \
 	    -out assets/test.enc
 
-	VAULTIFY_LOG_LEVEL=WARNING python3 runtests.py
+	VAULTIFY_LOG_LEVEL=DEBUG python3 runtests.py
 
 manual:
 	@groff -man -Tascii man/vaultify.1

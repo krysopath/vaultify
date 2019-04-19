@@ -60,10 +60,17 @@ class OpenSSLProvider(Provider):
     """
     Decrypt and provide secrets from a static file encrypted symmetrically with
     OpenSSL.
-
+    
+    >>> OpenSSLProvider(secret='abc').get_secrets()
+    {'./assets/test.enc': {'K1': 'V1', 'K2': 'V2'}}
     """
-    def __init__(self, secret: str):  
-        self.secret = os.environ.get('VAULTIFY_SECRET', secret)
+    def __init__(self,
+                 secret: str,
+                 cipher: str='aes-256-cbc',
+                 md: str='sha256'):  
+        self.secret = secret
+        self.cipher = cipher
+        self.md = md
         self.popen_kwargs = dict(
             bufsize=-1,
             executable='/usr/bin/openssl',
@@ -78,29 +85,15 @@ class OpenSSLProvider(Provider):
         """
         This implementation uses a preexisting openssl from the host system to
         run a command equivalent to:
-
-        `openssl aes-256-cbc -d -a -in <symmetrically-encrypted.enc>`
-
-        The file should be created with this command:
-
-        `openssl enc -aes-256-cbc -salt -a -in <file> -out <file>.enc`
-
-            where:
-                   `-salt` is recommended to prevent dictionary attacks
-                   '-a' is used to output an ascii-armored cipher text
-
-        TODO(CWE-546):
-            while us.gov uses AES256 for top secret data,
-            aes-256-cbc is a bad choice and we should push for a openssl version
-            that has aes-256-gcm to protect against a padding oracle in CBC modes.
-            TLDR: prefer an openssl version compiled with AEAD to allow aes-256-gcm
-
+        `openssl aes-256-cbc -md sha256 -d -a -in <symmetrically-encrypted.enc>`
+        
         """
         secrets = {}
         for filename in glob.glob('./assets/*.enc'):
             out = run_process(
-                ['openssl', 'aes-256-cbc',
+                ['openssl', self.cipher,
                  '-d', '-a',
+                 '-md', self.md,
                  '-in', filename,
                  '-k', self.secret],
                 self.popen_kwargs
@@ -109,15 +102,17 @@ class OpenSSLProvider(Provider):
             secrets[filename] = env2dict(out)
             logger.info(
                 'provided secrets from {}'.format(filename))
-        return secrets
+            return secrets
 
 
 class GPGProvider(Provider):
     """
     Decrypt and provide secrets from a static gpg file encrypted symmetrically.
+    >>> GPGProvider(secret='abc').get_secrets()
+    {'./assets/test.gpg': {'K1': 'V1', 'K2': 'V2'}}
     """
     def __init__(self, secret: str):  # nosec
-        self.secret = os.environ.get('VAULTIFY_SECRET', secret)
+        self.secret = secret
         self.popen_kwargs = dict(
             bufsize=-1,
             executable='/usr/bin/gpg',
@@ -132,7 +127,6 @@ class GPGProvider(Provider):
         """
         This implementation uses a preexisting gpg binary from the host system
         to run a command equivalent to `gpg -qd <symmetrically-encypted.gpg>`
-
         """
         secrets = {}
         for filename in glob.glob('./assets/*.gpg'):
@@ -144,6 +138,29 @@ class GPGProvider(Provider):
                 self.popen_kwargs
                 )
             secrets[filename] = env2dict(out)
+            logger.info(
+                'provided secrets from {}'.format(filename))
+
+        return secrets
+
+    
+class PlainTextProvider(Provider):
+    """
+    >>> PlainTextProvider().get_secrets()
+    {'./assets/secrets.plain': {'K1': 'V1', 'K2': 'V2'}}
+    """
+    def __init__(self):
+        """
+        
+        """
+        logger.debug('GPGProvider initialised')
+        
+    def get_secrets(self):
+        secrets = {}
+        for filename in glob.glob('./assets/*.plain'):
+            with open(filename, 'r') as infile:
+                out = infile.read()
+                secrets[filename] = env2dict(out)
             logger.info(
                 'provided secrets from {}'.format(filename))
 
