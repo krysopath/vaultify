@@ -33,7 +33,7 @@ clean:
 	rm -rf tests/new* assets/*
 
 run/tests: clean
-	cp tests/sample-config.env assets/secrets.plain
+	cp tests/test-config.env assets/secrets.plain
 	gpg \
 	    --symmetric\
 	    --batch\
