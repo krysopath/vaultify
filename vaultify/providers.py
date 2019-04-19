@@ -142,3 +142,26 @@ class GPGProvider(Provider):
                 'provided secrets from {}'.format(filename))
 
         return secrets
+
+    
+class PlainTextProvider(Provider):
+    """
+    >>> PlainTextProvider().get_secrets()
+    {'./assets/secrets.plain': {'K1': 'V1', 'K2': 'V2'}}
+    """
+    def __init__(self):
+        """
+        
+        """
+        logger.debug('GPGProvider initialised')
+        
+    def get_secrets(self):
+        secrets = {}
+        for filename in glob.glob('./assets/*.plain'):
+            with open(filename, 'r') as infile:
+                out = infile.read()
+                secrets[filename] = env2dict(out)
+            logger.info(
+                'provided secrets from {}'.format(filename))
+
+        return secrets
