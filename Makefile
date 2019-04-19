@@ -42,6 +42,7 @@ run/tests: clean
 	    tests/secrets.env
 	openssl enc\
 	    -k abc\
+	    -md sha256\
 	    -aes-256-cbc\
 	    -salt\
 	    -a\
