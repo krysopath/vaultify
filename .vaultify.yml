@@ -1,0 +1,10 @@
+---
+vaultify:
+  provider:
+    class: GPGProvider
+    args:
+      secret: abc
+  consumer:
+    class: DotEnvWriter
+    args:
+      path: ./tests/new_secrets.env
