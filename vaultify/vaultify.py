@@ -38,18 +38,11 @@ class Vaultify(API):
     """
 
     def get_secrets(self) -> dict:
-        logger.info(
-            'providing secrets from {}'.format(
-                self._provider)
-        )
+        logger.info("providing secrets from {}".format(self._provider))
         return self._provider.get_secrets()
 
-    def consume_secrets(self,
-                        data: dict) -> bool:
-        logger.info(
-            'consuming secrets with {}'.format(
-                self._consumer)
-        )
+    def consume_secrets(self, data: dict) -> bool:
+        logger.info("consuming secrets with {}".format(self._consumer))
         return self._consumer.consume_secrets(data)
 
     def validate(self) -> t.Iterable:
@@ -64,20 +57,16 @@ class Vaultify(API):
         """
 
         results = []
-        if not isinstance(self._provider,
-                          Provider):
+        if not isinstance(self._provider, Provider):
             results.append(
                 ProviderError(
-                    "The Provider {} is not a Provider".format(
-                        self._provider)
+                    "The Provider {} is not a Provider".format(self._provider)
                 )
             )
-        if not isinstance(self._consumer,
-                          Consumer):
+        if not isinstance(self._consumer, Consumer):
             results.append(
                 ConsumerError(
-                    "The Consumer {} is not a Consumer".format(
-                        self._consumer)
+                    "The Consumer {} is not a Consumer".format(self._consumer)
                 )
             )
 
@@ -87,16 +76,12 @@ class Vaultify(API):
         secrets = self.get_secrets()
         if not secrets:
             raise ValueError(
-                'The provider did not yield anything: {}'.format(
-                    self._provider)
+                "The provider did not yield anything: {}".format(self._provider)
             )
 
         to_consumer = {}
         for data in secrets.values():
-            logger.info(
-                'consuming secret: %s',
-                mask_secrets(secrets)
-                )
+            logger.info("consuming secret: %s", mask_secrets(secrets))
             to_consumer.update(data)
 
         return self.consume_secrets(to_consumer)
@@ -119,24 +104,18 @@ def factory(config_dict: dict, **kwargs) -> Vaultify:
 
     """
     logger.debug("factory starting..")
-    vfy = config_dict['vaultify']
+    vfy = config_dict["vaultify"]
 
     from . import providers
     from . import consumers
 
-    provider_class = getattr(
-            providers,
-            vfy["provider"]["class"]
-        )
-    consumer_class = getattr(
-        consumers,
-        vfy["consumer"]["class"]
-    )
+    provider_class = getattr(providers, vfy["provider"]["class"])
+    consumer_class = getattr(consumers, vfy["consumer"]["class"])
 
     return Vaultify(
         provider=provider_class(**vfy["provider"]["args"]),
-        consumer=consumer_class(**vfy["consumer"]["args"])
-        )
+        consumer=consumer_class(**vfy["consumer"]["args"]),
+    )
 
 
 def main() -> None:
@@ -148,5 +127,3 @@ def main() -> None:
     vaultify = factory(CFG)
     vaultify.validate()
     vaultify.run()
-
-

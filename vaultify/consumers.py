@@ -15,11 +15,7 @@ from . import util
 
 from .base import Consumer
 
-__all__ = (
-    'DotEnvWriter',
-    'JsonWriter',
-    'EnvRunner'
-)
+__all__ = ("DotEnvWriter", "JsonWriter", "EnvRunner")
 
 logger = logging.getLogger(__name__)
 
@@ -31,26 +27,21 @@ class FileWriter:
     >>> isinstance(fw, FileWriter)
     True
     """
-    def __init__(self,
-                 path: str,
-                 mode: oct = 0o600,
-                 overwrite: bool = False,
-                 *args, **kwargs):
+
+    def __init__(
+        self, path: str, mode: oct = 0o600, overwrite: bool = False, *args, **kwargs
+    ):
         self.path = path
         self.mode = mode
         self.overwrite = overwrite
 
     def _write_data_to_fd(self, data: str):
-        with open(os.open(self.path,
-                          os.O_CREAT | os.O_WRONLY,
-                          0o200), 'w') as file_out:
-            logger.info(
-                "writing to {}, mode {}".format(
-                    self.path, oct(self.mode)))
-            
+        with open(os.open(self.path, os.O_CREAT | os.O_WRONLY, 0o200), "w") as file_out:
+            logger.info("writing to {}, mode {}".format(self.path, oct(self.mode)))
+
             file_out.write(data)
-            file_out.write('\n')
-        
+            file_out.write("\n")
+
     def write(self, data: str):
         """
         >>> fw = FileWriter('tests/new.filewriter', overwrite=False)
@@ -70,16 +61,12 @@ class FileWriter:
             self._write_data_to_fd(data)
         else:
             if self.overwrite:
-                logger.warning(
-                    'overwriting {}'.format(self.path))
+                logger.warning("overwriting {}".format(self.path))
                 self._write_data_to_fd(data)
             else:
-                logger.warning(
-                    '{} already exists: skip'.format(
-                        self.path))
-                
-        os.chmod(
-            self.path, self.mode)
+                logger.warning("{} already exists: skip".format(self.path))
+
+        os.chmod(self.path, self.mode)
 
 
 class DotEnvWriter(Consumer, FileWriter):
@@ -91,11 +78,10 @@ class DotEnvWriter(Consumer, FileWriter):
     >>> open('tests/new.env').read()
     "export K1='V1'\\nexport K2='V2'\\n"
     """
+
     def consume_secrets(self, data: dict):
-        self.write(
-            "\n".join(
-                util.dict2env(data)))
-        
+        self.write("\n".join(util.dict2env(data)))
+
 
 class JsonWriter(Consumer, FileWriter):
     """
@@ -105,13 +91,11 @@ class JsonWriter(Consumer, FileWriter):
     >>> open('tests/new.json').read()
     '{\\n  "K1": "V1",\\n  "K2": "V2"\\n}\\n'
     """
+
     def consume_secrets(self, data: dict):
-        self.write(json.dumps(
-            data,
-            sort_keys=True,
-            indent=2)
-        )
-        
+        self.write(json.dumps(data, sort_keys=True, indent=2))
+
+
 class YamlWriter(Consumer, FileWriter):
     """
     This Consumer writes secrets as a YAML dictionary
@@ -120,12 +104,12 @@ class YamlWriter(Consumer, FileWriter):
     >>> open('tests/new.yaml').read()
     'K1: V1\\nK2: V2\\n\\n'
     """
+
     def consume_secrets(self, data: dict):
-        self.write(yaml.dump(
-            data,
-            default_flow_style=False,
-            allow_unicode=True,
-            encoding='utf-8').decode()
+        self.write(
+            yaml.dump(
+                data, default_flow_style=False, allow_unicode=True, encoding="utf-8"
+            ).decode()
         )
 
 
@@ -147,39 +131,24 @@ class EnvRunner(Consumer):
     ...
     FileNotFoundError: [Errno 2] No such file or directory: 'nowhere.sh': 'nowhere.sh'
     """
-    
+
     def __init__(self, path: str):
-        self.path = os.environ.get(
-            "VAULTIFY_TARGET", path
-        ).split()
+        self.path = os.environ.get("VAULTIFY_TARGET", path).split()
 
     def consume_secrets(self, data: dict):
         prepared_env = dict(os.environ)
 
         for key, value in data.items():
-            prepared_env.update(
-                {key: value}
-            )
-        logger.info(
-            '{} enriched the environment'.format(self))
+            prepared_env.update({key: value})
+        logger.info("{} enriched the environment".format(self))
 
         try:
             # TODO Overhaul this
-            proc = run(
-                self.path,
-                stdout=PIPE,
-                stderr=PIPE,
-                env=prepared_env
-            )
-            logger.info(
-                'running the process "{}"'.format(self.path))
+            proc = run(self.path, stdout=PIPE, stderr=PIPE, env=prepared_env)
+            logger.info('running the process "{}"'.format(self.path))
 
         except FileNotFoundError as error:
-            logger.critical(
-                'error in {} executing "{}"'.format(self, self.path)
-            )
+            logger.critical('error in {} executing "{}"'.format(self, self.path))
             raise error
 
-        print(
-            proc.stdout.decode()
-        )
+        print(proc.stdout.decode())

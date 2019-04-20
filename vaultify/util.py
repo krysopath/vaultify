@@ -24,12 +24,8 @@ def dict2env(secret_data: dict) -> t.Iterable:
     ["export KEY1='VAL1'", "export KEY2='VAL2'"]
 
     """
-    logger.debug(
-        "transforming this dict to newline separated K=V pairs")
-    return [
-        "export {}='{}'".format(key, value)
-        for key, value in secret_data.items()
-    ]
+    logger.debug("transforming this dict to newline separated K=V pairs")
+    return ["export {}='{}'".format(key, value) for key, value in secret_data.items()]
 
 
 def env2dict(env_data: t.AnyStr) -> dict:
@@ -48,15 +44,14 @@ def env2dict(env_data: t.AnyStr) -> dict:
     >>> env2dict('KEY1= #VAL1\\n#KEY2=VAL2')
     {'KEY1': ''}
     """
-    logger.debug(
-        "transforming the env to dict-class")
+    logger.debug("transforming the env to dict-class")
 
     dict_data = {}
-    line_data = env_data.split('\n')
+    line_data = env_data.split("\n")
     for line in line_data:
         line = re.sub("\s*#.*", "", line)
         if line:
-            key, value = line.split('=')
+            key, value = line.split("=")
             dict_data[key] = value
     return dict_data
 
@@ -75,23 +70,21 @@ def mask_secrets(secrets: dict) -> dict:
     ...             4: "abc"}}})
     {'path': {'a': '***', 'b': '***', 'c': {3: '***', 4: '***'}}}
     """
-    logger.debug(
-        "hiding secrets for logs")
+    logger.debug("hiding secrets for logs")
     masked = {}
 
     for key, value in secrets.items():
         if isinstance(value, (str, int)):
             # being extra destructive here, since we do
             # never want secrets leaked into logs
-            value = '***'
+            value = "***"
         elif isinstance(value, dict):
             value = mask_secrets(value)
         masked[key] = value
     return masked
 
 
-def run_process(cmd: t.Union[list, tuple],
-                kwargs: dict) -> t.AnyStr:
+def run_process(cmd: t.Union[list, tuple], kwargs: dict) -> t.AnyStr:
     """
     Run a target process with Popen and kwargs
 
@@ -107,7 +100,8 @@ def run_process(cmd: t.Union[list, tuple],
         if proc.returncode:
             # if there is non zero rc, please die
             raise ChildProcessError(
-                'terminated with an non-zero value: {}'.format(proc.stderr.read()))
+                "terminated with an non-zero value: {}".format(proc.stderr.read())
+            )
 
     except OSError as error:
         # this case should handle a missing/non-executable binary
@@ -149,12 +143,14 @@ def yaml_dict_merge(a: dict, b: dict) -> dict:
     """
     key = None
     try:
-        if (a is None
-                or isinstance(a, str)
-                or isinstance(a, int)
-                or isinstance(a, float)
-                or isinstance(a, bool)):
-            #^ border case for first run or if a is a primitive
+        if (
+            a is None
+            or isinstance(a, str)
+            or isinstance(a, int)
+            or isinstance(a, float)
+            or isinstance(a, bool)
+        ):
+            # ^ border case for first run or if a is a primitive
             if b:
                 # override a only when b has value != None
                 a = b
@@ -181,7 +177,8 @@ def yaml_dict_merge(a: dict, b: dict) -> dict:
                         a[key] = b[key]
             else:
                 raise ValueError(
-                    'Cannot merge non-dict "{}" with dict "{}"'.format(b, a))
+                    'Cannot merge non-dict "{}" with dict "{}"'.format(b, a)
+                )
         else:
             raise NotImplementedError(
                 'Merging "{}" with "{}" is not implemented.'.format(type(a), type(b))
@@ -202,15 +199,10 @@ def load_yaml_cfg_sources(yaml_files: t.Iterable) -> list:
         if os.path.isfile(config_file):
             with open(config_file) as yaml_conf:
                 # linter.run(LINT_CONF, yaml_conf)
-                logger.debug('reading %s', config_file)
-                cfg_sources.append(
-                    yaml.safe_load(yaml_conf)
-                )
+                logger.debug("reading %s", config_file)
+                cfg_sources.append(yaml.safe_load(yaml_conf))
     return cfg_sources
 
 
 def prefer_env_if_not_none(key: str) -> t.Union[str, None]:
     return os.environ.get(key, None)
-
-
-

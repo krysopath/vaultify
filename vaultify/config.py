@@ -4,32 +4,21 @@ import os
 from pprint import pprint
 from .util import yaml_dict_merge, load_yaml_cfg_sources
 
-MODULE_BASE_DIR = os.path.dirname(
-    os.path.realpath(__file__))
-ETC_DEFAULT_CONFIG = '/etc/default/vaultify.yml'
-USER_CONFIG = '{}/.vaultify.yml'.format(os.environ.get("HOME"))
-LOCAL_CONFIG = '{}/.vaultify.yml'.format(os.environ.get("PWD", '.'))
+MODULE_BASE_DIR = os.path.dirname(os.path.realpath(__file__))
+ETC_DEFAULT_CONFIG = "/etc/default/vaultify.yml"
+USER_CONFIG = "{}/.vaultify.yml".format(os.environ.get("HOME"))
+LOCAL_CONFIG = "{}/.vaultify.yml".format(os.environ.get("PWD", "."))
 
-CFG_DEFAULT_FILES = [
-    ETC_DEFAULT_CONFIG,
-    USER_CONFIG,
-    LOCAL_CONFIG]
+CFG_DEFAULT_FILES = [ETC_DEFAULT_CONFIG, USER_CONFIG, LOCAL_CONFIG]
 
 
 BASE_CFG = {
-    "vaultify": {
-    },
+    "vaultify": {},
     "handlers": {
-        "console": {
-            "level": "WARN",
-        },
-        "file": {
-            "level": "WARN",
-            "filename": "./vaultify.log"
-        }
+        "console": {"level": "WARN"},
+        "file": {"level": "WARN", "filename": "./vaultify.log"},
     },
-    "loggers": {
-    }
+    "loggers": {},
 }
 
 
@@ -38,36 +27,31 @@ LOG_CFG = {
     "formatters": {
         "simple": {
             "class": "logging.Formatter",
-            "format": '[%(levelname)-5.5s] [%(name)-20.20s] - %(message)s'
+            "format": "[%(levelname)-5.5s] [%(name)-20.20s] - %(message)s",
         },
         "extended": {
             "class": "logging.Formatter",
-            "format": "[%(asctime)s] [%(name)-20.20s] [%(levelname)-5.5s]  %(message)s"
-        }
+            "format": "[%(asctime)s] [%(name)-20.20s] [%(levelname)-5.5s]  %(message)s",
+        },
     },
     "handlers": {
         "console": {
             "class": "logging.StreamHandler",
             "level": "DEBUG",
-            "stream": 'ext://sys.stdout',
-            "formatter": "simple"
+            "stream": "ext://sys.stdout",
+            "formatter": "simple",
         },
         "file": {
             "class": "logging.FileHandler",
             "level": "DEBUG",
             "filename": "./debug.log",
             "mode": "w",
-            "formatter": "extended"
-        }
+            "formatter": "extended",
+        },
     },
     "loggers": {
-        "": {
-            "level": "DEBUG",
-            "handlers": ["console", "file"],
-            "propagate": True
-        },
-
-    }
+        "": {"level": "DEBUG", "handlers": ["console", "file"], "propagate": True}
+    },
 }
 
 
@@ -75,36 +59,25 @@ ENV_CFG = {
     "vaultify": {
         "provider": {
             "class": os.environ.get("VAULTIFY_PROVIDER"),
-            "args": {
-                "secret": os.environ.get("VAULTIFY_SECRET")
-            }
+            "args": {"secret": os.environ.get("VAULTIFY_SECRET")},
         },
         "consumer": {
             "class": os.environ.get("VAULTIFY_CONSUMER"),
-            "args": {
-                "path": os.environ.get("VAULTIFY_DESTINATION")
-            }
-        }
+            "args": {"path": os.environ.get("VAULTIFY_DESTINATION")},
+        },
     },
     "handlers": {
-        "console": {
-            "level": os.environ.get("VAULTIFY_LOG_LEVEL"),
-        },
+        "console": {"level": os.environ.get("VAULTIFY_LOG_LEVEL")},
         "file": {
             "level": os.environ.get("VAULTIFY_LOG_LEVEL"),
-            "filename": os.environ.get("VAULTIFY_LOG_FILE")
-        }
+            "filename": os.environ.get("VAULTIFY_LOG_FILE"),
+        },
     },
-    "loggers": {
-        "": {
-            "level": os.environ.get("VAULTIFY_LOG_LEVEL")
-        }
-    }
+    "loggers": {"": {"level": os.environ.get("VAULTIFY_LOG_LEVEL")}},
 }
 
 
-def configure(
-        yaml_files: list = CFG_DEFAULT_FILES) -> dict:
+def configure(yaml_files: list = CFG_DEFAULT_FILES) -> dict:
 
     """
         This populates the global config dictionary with merged values
@@ -124,9 +97,7 @@ def configure(
 
     for src in cfg_sources:
         if src:
-            config_data = yaml_dict_merge(
-                config_data, src
-            )
+            config_data = yaml_dict_merge(config_data, src)
 
     config_data = yaml_dict_merge(config_data, ENV_CFG)
 
@@ -141,5 +112,5 @@ __all__ = (
     "CFG_DEFAULT_FILES",
     "BASE_CFG",
     "LOG_CFG",
-    "configure"
+    "configure",
 )

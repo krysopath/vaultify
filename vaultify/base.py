@@ -13,21 +13,19 @@ logger = logging.getLogger(__name__)
 
 class Provider:
     def __str__(self):
-        return '{}'.format(self.__class__)
+        return "{}".format(self.__class__)
 
     @abc.abstractmethod
     def get_secrets(self) -> dict:
         pass
 
 
-
 class Consumer(metaclass=abc.ABCMeta):
     def __str__(self):
-        return '{}'.format(self.__class__)
+        return "{}".format(self.__class__)
 
     @abc.abstractmethod
-    def consume_secrets(self,
-                        data: dict) -> bool:
+    def consume_secrets(self, data: dict) -> bool:
         pass
 
 
@@ -36,9 +34,8 @@ class API(metaclass=abc.ABCMeta):
     ABC meta class for later extensibility
     and cheap NotImplementedErrors
     """
-    def __init__(self,
-                 provider: Provider,
-                 consumer: Consumer):
+
+    def __init__(self, provider: Provider, consumer: Consumer):
 
         self._provider = provider
         self._consumer = consumer
@@ -52,8 +49,7 @@ class API(metaclass=abc.ABCMeta):
         pass
 
     @abc.abstractmethod
-    def consume_secrets(self,
-                        data: dict) -> bool:
+    def consume_secrets(self, data: dict) -> bool:
         pass
 
     @abc.abstractmethod
