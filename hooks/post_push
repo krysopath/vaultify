@@ -1,4 +1,12 @@
 #!/bin/sh
 
+echo $SOURCE_BRANCH
+echo $SOURCE_COMMIT
+echo $COMMIT_MSG
+echo $DOCKER_REPO
+echo $DOCKERFILE_PATH
+echo $DOCKER_TAG
+echo $IMAGE_NAME
+
 docker tag "$IMAGE_NAME" "$DOCKER_REPO:$SOURCE_COMMIT"
 docker push "$DOCKER_REPO:$SOURCE_COMMIT"
