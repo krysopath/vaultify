@@ -1,4 +1,4 @@
-TARGET := production
+TARGET ?= prod
 BASE_IMAGE := 3.7-alpine3.7
 HEAD ?= $(shell git rev-parse --short HEAD)
 TAG ?= $(shell git describe --abbrev=0 --tags)
