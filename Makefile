@@ -65,7 +65,7 @@ dev/install/os:
 	sudo apt-get install gnupg openssl
 
 .ONESHELL:
-git-init:
+dev/git-init:
 		@read -p "enter email: " EMAIL
 		read -p "enter public signature-key: " GPG
 		git config user.signingKey $${GPG}

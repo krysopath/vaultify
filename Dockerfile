@@ -2,6 +2,7 @@ ARG BASE_IMAGE
 
 FROM python:$BASE_IMAGE as developement
 WORKDIR /code
+ENV HOME=/code
 COPY requirements.txt .
 RUN mkdir secrets assets\
  && apk add --no-cache \
