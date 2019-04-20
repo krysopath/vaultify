@@ -18,7 +18,8 @@ logger = logging.getLogger(__name__)
 __all__ = (
     'VaultProvider',
     'GPGProvider',
-    'OpenSSLProvider'
+    'OpenSSLProvider',
+    'PlainTextProvider'
 )
 
 
@@ -150,9 +151,6 @@ class PlainTextProvider(Provider):
     {'./assets/secrets.plain': {'K1': 'V1', 'K2': 'V2'}}
     """
     def __init__(self):
-        """
-        
-        """
         logger.debug('GPGProvider initialised')
         
     def get_secrets(self):

@@ -4,6 +4,11 @@ tests/new*
 # security
 secring.*
 
+# docs
+*.pdf
+*.html
+*.tex
+
 # Emacs
 # -*- mode: gitignore; -*-
 *~
