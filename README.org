@@ -1,6 +1,14 @@
-#+TITLE: vaultify usage 
+#+TITLE: vaultify - hexagon of secrets 
 #+OPTIONS:
 #+AUTHOR: Georg vom Endt (krysopath@gmail.com)
+
+* Introduction
+Vaultify is secret provisioning method. It can be used to read/write
+from/to resources and pass environment values to spawned processes. 
+
+Originally a simple bash script fetching from HashiCorp Vault and
+writing as dotenv file, it quickly became an API for providing secrets
+from any arbitrary URI to consume the secrets via another arbitrary URI
 
 * Installation
 This section explains different installation methods.
@@ -27,189 +35,9 @@ These tools can greatly speed up local development, when used in
 conjunction via ~make~, so install them. They can overwhelm you with
 output, too.
 
-*** ubuntu
+*** debian
 #+BEGIN_SRC shell
-apt install make entr yamllint pylint bandit
+apt-get install make entr yamllint pylint bandit 
+pip3 install black
 #+END_SRC
 
-* usage
-
-** first steps
-
-1. either create a virtualenv and install requirements.txt or
-2. run `docker build .`
-
-Before using `vaultify` you need to export these into your environment:
-
-#+BEGIN_SRC 
-export VAULTIFY_PROVIDER=<a-provider-of-your-choice>
-export VAULTIFY_CONSUMER=<a-consumer-of-your-choice>
-export VAULTIFY_LOGLEVEL=<critical|warning|info|debug>  # default is info
-#+END_SRC
-
->**r**ead **t**he **f**riendly **m**anual for the chosen Provider & Consumer, too
-
-Then just run:
-#+BEGIN_SRC
-./entry.py
-#+END_SRC
-
-
-
-** feature overview
-
-In this table you find an info about which Provider/Consumer
-pairs are supported:
-
-| pairs        | GPG | OpenSSL | Vault |
-|--------------+-----+---------+-------|
-| DotEnvWriter | y   | y       | y     |
-| EnvRunner    | y   | y       | y     |
-| JsonWriter   | y   | y       | y     |
-
-
-Assuming the pattern holds, we expect always full compatibility
-between any Provider/Consumer pair.
-
-** providers
-
-Providers are all classes, that create some `vaultify`-compliant dictionary,
-which then is used by `vaultify` consumers.
-
-*** GPGProvider
-
-This Provider can decrypt symmetrically encrypted files, created with `gpg`.
-
-Adhere to this format:
-#+BEGIN_SRC 
-KEY1=VAL1
-[...]
-KEYN=VALN
-#+END_SRC
-
-To encrypt such a file, execute:
-#+BEGIN_SRC 
-gpg --symmetric <secretfile>
-#+END_SRC
-
-Below are environment variables, that are needed by this provider:
-
-#+BEGIN_SRC 
-# this will be used as the passphrase to gpg
-export VAULTIFY_SECRET=<passphrase>
-#+END_SRC
-
-*** OpenSSLProvider
-
-This provider can decrypt symmetrically encrypted files, created with `openssl`
-
-Adhere to this format:
-#+BEGIN_SRC 
-KEY1=VAL1
-[...]
-KEYN=VALN
-#+END_SRC
-
-To encrypt such a file, execute:
-```bash
-#+BEGIN_SRC 
-openssl enc -aes-256-cbc -salt -a -in <file> -out <file>.enc
-#+END_SRC
-```
-
-> Do not use aes-256-cbc, if there is aes-256-gcm available in your openssl.
-This prevents Padding Oracle attacks against the cipher text. Currently
-setting the aes cipher is not possible in `vaultify` but will be made, when
-the default openssl library ships with AEAD compiled. If your OpenSSL CLI
-supports aes-256-gcm, please file a bug report against vaultify.
-
-Below are environment variables, that are needed by this provider:
-
-```bash
-#+BEGIN_SRC 
-#+END_SRC
-# this will be used as the passphrase to openssl
-export VAULTIFY_SECRET=<passphrase>
-```
-
-*** VaultProvider
-
-This provider fetches secrets from HashiCorp Vault API.
-
-
-Below are environment variables, that are needed by this provider:
-
-#+BEGIN_SRC 
-# set this to a reachable vault API
-export VAULT_ADDR=<vault.org.tld>
-# set this to nodes in vaults kv engine, where you do have perms for READ
-export VAULT_PATHS=<comma-separated-list-of-paths-for-vaults-kv-engine>
-
-# if you do not set $VAULTIFY_SECRET, then
-export VAULT_TOKEN=<a-valid-vault-token>
-#+END_SRC
-
-`VaultProvider` will use `VAULTIFY_SECRET` or `VAULT_TOKEN` for authentication,
-in that order.
-
-** consumers
-
-are all classes that operate on a `vaultify` compliant dictionary, to
-**somehow** use the secrets in there for the greater good.
-
-*** DotEnvWriter
-
-This simplest form of vaultification just creates a plaintext file with
-the form of
-
-#+BEGIN_SRC 
-export Key1=Value1
-[...]
-export KeyN=ValueN
-#+END_SRC
-
-for all N keys in the provided dictionary.
-
-Below are environment variables, that are needed by this consumer:
-
-#+BEGIN_SRC 
-# this controls the location of the dotenv file
-export VAULTIFY_DESTFILE=/a/path/to/where/secrets.env
-#+END_SRC
-
-
-*** JsonWriter
-
-This consumer is very similar to the `DotEnvWriter`, but produces a
-json file instead.
-
-Below are environment variables, that are needed by this consumer:
-
-```bash
-#+BEGIN_SRC 
-#+END_SRC
-# this controls the location of the dotenv file
-export VAULTIFY_DESTFILE=/a/path/to/where/secrets.json
-```
-
-*** EnvRunner
-
-If you want to just execute a process with some secrets, then
-`EnvRunner` consumer will run a subprocess with an enriched
-environment for you.
-
->In that sense `EnvRunner` doubles as an entry point for docker runtimes.
-
-Choose this, if you want to prevent any kind of secret persistence.
-
-> one might not like having docker `tmpfs` volumes swapped or
-accidentally persist after a crash
-
-Below are environment variables, that are needed by this consumer:
-
-#+BEGIN_SRC 
-# this controls the invocation of the target process.
-export VAULTIFY_TARGET='/a/path/where/a/secret/hungry/binary --with-some flag wants-execution'
-#+END_SRC
-
-Currently `EnvRunner` does not support interactive commands.
