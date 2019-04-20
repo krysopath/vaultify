@@ -3,7 +3,7 @@
 TAG=$(git describe --abbrev=0 --tags)
 docker build\
 	--build-arg BASE_IMAGE=3.7-alpine3.7\
-	-t vaultify:$TAG\
-	-t vaultify:latest\
+	-t vaultify/vaultify:$TAG\
+	-t vaultify/vaultify:latest\
 	--target prod\
 	.
