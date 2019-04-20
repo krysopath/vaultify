@@ -30,7 +30,7 @@ artifact/tag:
 		vaultify:$(TAG)
 
 clean:
-	rm -rf tests/new* assets/*
+	rm -rf tests/new* assets/* build/ dist *vaultify.egg*
 
 run/tests: clean
 	cp tests/test-config.env assets/secrets.plain
