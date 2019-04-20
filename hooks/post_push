@@ -9,4 +9,4 @@ echo $DOCKER_TAG
 echo $IMAGE_NAME
 
 docker tag "$IMAGE_NAME" "$DOCKER_REPO:$SOURCE_COMMIT"
-docker push "$DOCKER_REPO:$SOURCE_COMMIT"
+docker push $IMAGE_NAME
