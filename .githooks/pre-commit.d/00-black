@@ -1,1 +1,13 @@
-black ./vaultify
+#!/bin/sh
+
+# Stash unstaged changes
+git stash -q --keep-index
+
+black \
+	--exclude venv\
+	.
+
+# Stage updated files
+git add -u
+# Re-apply original unstaged changes
+git stash pop -q

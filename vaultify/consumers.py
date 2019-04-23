@@ -117,14 +117,14 @@ class EnvRunner(Consumer):
     """
     This Consumer will update the environment and then run a subprocess in that
     altered environment.
-    
+
     We carry our local environment over into the spawned process:
     >>> os.environ.update({"K1": "V1"})
     >>> EnvRunner('./tests/echo-vars.sh').consume_secrets({"K2":"V2","K3":"V3"})
     K1=V1
     K2=V2
     K3=V3
-    
+
     We fail when the command can not be found:
     >>> EnvRunner('nowhere.sh').consume_secrets({"K1":"V1"})
     Traceback (most recent call last):

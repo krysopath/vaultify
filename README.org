@@ -1,0 +1,43 @@
+#+TITLE: vaultify - hexagon of secrets 
+#+OPTIONS:
+#+AUTHOR: Georg vom Endt (krysopath@gmail.com)
+
+* Introduction
+Vaultify is secret provisioning method. It can be used to read/write
+from/to resources and pass environment values to spawned processes. 
+
+Originally a simple bash script fetching from HashiCorp Vault and
+writing as dotenv file, it quickly became an API for providing secrets
+from any arbitrary URI to consume the secrets via another arbitrary URI
+
+* Installation
+This section explains different installation methods.
+** Requirements
+   - python3.6, python3.7
+   - pip
+   - docker (obsoletes the above)
+
+** from pypi
+Most implementers will fetch the package from pypi and build their own
+things on another layer.
+#+BEGIN_SRC shell
+pip3 install vaultify
+#+END_SRC
+
+** from git
+Alternatively fetch the sources from github to develop your own
+adapter classes.
+#+BEGIN_SRC shell
+git clone git@github.com:krysopath/vaultify.git
+#+END_SRC
+** os dependencies
+These tools can greatly speed up local development, when used in
+conjunction via ~make~, so install them. They can overwhelm you with
+output, too.
+
+*** debian
+#+BEGIN_SRC shell
+apt-get install make entr yamllint pylint bandit 
+pip3 install black
+#+END_SRC
+

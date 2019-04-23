@@ -11,8 +11,11 @@ ci: run/tests\
 dev/ci:
 	ls vaultify/*py Dockerfile .vaultify.yml | entr -s 'make run/tests'
 
-artifact/pkg:
+artifact/pkg: clean
 	python3 setup.py sdist bdist_wheel
+
+pypi: artifact/pkg
+	twine upload --repository-url https://test.pypi.org/legacy/ dist/*
 
 artifact/docker:
 	docker build \
@@ -30,7 +33,7 @@ artifact/tag:
 		vaultify:$(TAG)
 
 clean:
-	rm -rf tests/new* assets/*
+	rm -rf tests/new* assets/* build/ dist *vaultify.egg*
 
 run/tests: clean
 	cp tests/test-config.env assets/secrets.plain
@@ -53,13 +56,13 @@ run/tests: clean
 manual:
 	@groff -man -Tascii man/vaultify.1
 
-dev/install/packaging:
+dev/install/tools:
 	python3\
 		-m pip\
 		install\
 		--user\
 		--upgrade\
-		pip setuptools wheel
+		pip setuptools wheel twine black
 
 dev/install/os:
 	sudo apt-get install gnupg openssl
