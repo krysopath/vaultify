@@ -29,7 +29,7 @@ class Vaultify(API):
 
     >>> from . import consumers, providers
     >>> vfy = Vaultify(
-    ...     consumer=consumers.EnvRunner('env'), 
+    ...     consumer=consumers.EnvRunner('env'),
     ...     provider=providers.GPGProvider('abc')
     ... )
     >>> isinstance(vfy, Vaultify)
@@ -48,12 +48,12 @@ class Vaultify(API):
     def validate(self) -> t.Iterable:
         """
         >>> vfy = Vaultify(
-        ...     consumer="fancystring", 
+        ...     consumer="fancystring",
         ...     provider={1: 2}
         ... )
         >>> isinstance(vfy.validate(), list)
         True
-        >>> 
+        >>>
         """
 
         results = []
@@ -94,10 +94,10 @@ def factory(config_dict: dict, **kwargs) -> Vaultify:
     :param config_dict: an initialised cfg dict
     :param kwargs: user passed kwargs
     :return:
- 
+
     >>> from . import configure
     >>> isinstance(
-    ...     factory(configure()), 
+    ...     factory(configure()),
     ...     Vaultify
     ... )
     True
