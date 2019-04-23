@@ -7,12 +7,12 @@ from setuptools import setup
 setup(
     name='vaultify',
     packages=['vaultify'],
-    version='2.0.0',
+    version='0.1.2',
     description='A hexagon of secret provisoning',
     author='Georg vom Endt',
     author_email='krysopath@gmail.com',
     url='https://github.com/krysopath/vaultify',
-    download_url='https://github.com/author/repo/tarball/2.0.0',
+    download_url='https://github.com/krysopath/vaultify/tarball/0.1.1',
     keywords=['vault', 'gpg', 'secrets', 'docker', 'cli'],
     entry_points={
         'console_scripts': [
