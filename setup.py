@@ -11,7 +11,7 @@ setup(
     description="A hexagon of secret provisoning",
     author="Georg vom Endt",
     author_email="krysopath@gmail.com",
-    url="https://github.com/krysopath/vaultify",
+    url='https://github.com/krysopath/vaultify',
     download_url="https://github.com/krysopath/vaultify/tarball/0.1.1",
     keywords=["vault", "gpg", "secrets", "docker", "cli"],
     entry_points={"console_scripts": ["vaultify=vaultify.vaultify:main"]},
