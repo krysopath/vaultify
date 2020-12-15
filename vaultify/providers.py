@@ -53,7 +53,7 @@ class OpenSSLProvider(Provider):
     """
     Decrypt and provide secrets from a static file encrypted symmetrically with
     OpenSSL.
-    
+
     >>> OpenSSLProvider(secret='abc').get_secrets()
     {'./assets/test.enc': {'K1': 'V1', 'K2': 'V2'}}
     """
@@ -77,7 +77,7 @@ class OpenSSLProvider(Provider):
         This implementation uses a preexisting openssl from the host system to
         run a command equivalent to:
         `openssl aes-256-cbc -md sha256 -d -a -in <symmetrically-encrypted.enc>`
-        
+
         """
         secrets = {}
         for filename in glob.glob("./assets/*.enc"):

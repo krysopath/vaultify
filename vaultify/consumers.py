@@ -129,7 +129,7 @@ class EnvRunner(Consumer):
     >>> EnvRunner('nowhere.sh').consume_secrets({"K1":"V1"})
     Traceback (most recent call last):
     ...
-    FileNotFoundError: [Errno 2] No such file or directory: 'nowhere.sh': 'nowhere.sh'
+    FileNotFoundError: [Errno 2] No such file or directory: 'nowhere.sh'
     """
 
     def __init__(self, path: str):

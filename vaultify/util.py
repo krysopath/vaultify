@@ -63,8 +63,8 @@ def mask_secrets(secrets: dict) -> dict:
 
     >>> mask_secrets(
     ...     {"path": {
-    ...         "a": "abcdefghijklmnopqrstuvwxyz", 
-    ...         "b": "abc", 
+    ...         "a": "abcdefghijklmnopqrstuvwxyz",
+    ...         "b": "abc",
     ...         "c": {
     ...             3: "abc",
     ...             4: "abc"}}})
